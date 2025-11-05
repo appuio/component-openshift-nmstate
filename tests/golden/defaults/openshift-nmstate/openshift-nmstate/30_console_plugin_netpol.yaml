@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations: {}
+  labels:
+    name: allow-console-console-nmstate-plugin
+  name: allow-console-console-nmstate-plugin
+spec:
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: console
+              component: ui
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: openshift-console
+      ports:
+        - port: 9443
+          protocol: TCP
+  podSelector:
+    matchLabels:
+      app: nmstate-console-plugin
+  policyTypes:
+    - Ingress
