@@ -64,10 +64,22 @@ local instance =
     },
   } + com.makeMergeable(params.config);
 
+local NodeNetworkConfigurationPolicy(name) =
+  kube._Object('nmstate.io/v1', 'NodeNetworkConfigurationPolicy', name) {
+    metadata+: {
+      annotations+: {
+        'argocd.argoproj.io/sync-options': 'SkipDryRunOnMissingResource=true',
+      },
+    },
+  };
+
+local policies = com.generateResources(params.policies, NodeNetworkConfigurationPolicy);
+
 {
   '00_namespace': namespace,
   '10_operator_group': operator_group,
   '10_subscription': subscription,
   '20_nmstate_instance': instance,
   '30_console_plugin_netpol': console_plugin_netpol,
+  '40_policies': policies,
 }
