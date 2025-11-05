@@ -1,0 +1,5 @@
+parameters:
+  openshift_nmstate:
+    =_metadata:
+      multi_tenant: true
+    namespace: syn-openshift-nmstate

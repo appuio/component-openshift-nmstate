@@ -1,0 +1,6 @@
+name: openshift-nmstate
+title: openshift-nmstate
+version: master
+start_page: ROOT:index.adoc
+nav:
+  - modules/ROOT/partials/nav.adoc
