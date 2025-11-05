@@ -15,3 +15,25 @@ spec:
           next-hop-interface: ens3
   nodeSelector:
     node-role.kubernetes.io/infra: ''
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  labels:
+    name: infra-static-routes-2
+  name: infra-static-routes-2
+spec:
+  desiredState:
+    routes:
+      config:
+        - destination: 203.0.113.0/25
+          next-hop-address: 172.18.200.20
+          next-hop-interface: ens3
+        - destination: 203.0.113.128/25
+          next-hop-address: 172.18.200.20
+          next-hop-interface: ens3
+          state: absent
+  nodeSelector:
+    node-role.kubernetes.io/infra: ''

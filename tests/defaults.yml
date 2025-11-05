@@ -20,3 +20,14 @@ parameters:
                 - destination: 198.51.100.0/24
                   next-hop-address: 172.18.200.20
                   next-hop-interface: ens3
+
+    staticRoutes:
+      infra-static-routes-2:
+        nodeSelector:
+          node-role.kubernetes.io/infra: ''
+        destinations:
+          - 203.0.113.0/25
+          - ~203.0.113.128/25
+        config:
+          next-hop-address: 172.18.200.20
+          next-hop-interface: ens3
