@@ -64,70 +64,10 @@ local instance =
     },
   } + com.makeMergeable(params.config);
 
-local NodeNetworkConfigurationPolicy(name) =
-  kube._Object('nmstate.io/v1', 'NodeNetworkConfigurationPolicy', name) {
-    metadata+: {
-      annotations+: {
-        'argocd.argoproj.io/sync-options': 'SkipDryRunOnMissingResource=true',
-      },
-    },
-  };
-
-local policies = com.generateResources(params.policies, NodeNetworkConfigurationPolicy);
-
-local static_routes = [
-  local cfg = params.staticRoutes[name];
-  // convert to set to remove duplicates
-  local destinations = std.set(cfg.destinations);
-  local add_destinations = [ d for d in destinations if !std.startsWith(d, '~') ];
-  // use d[1:] for rem destinations since they're prefixed with ~
-  local rem_destinations = [ d[1:] for d in cfg.destinations if std.startsWith(d, '~') ];
-  NodeNetworkConfigurationPolicy(name) {
-    spec: {
-      nodeSelector: cfg.nodeSelector,
-      desiredState: {
-        routes: {
-          config: [
-            cfg.config {
-              destination: d,
-            }
-            for d in add_destinations
-          ] + [
-            cfg.config {
-              destination: d,
-              state: 'absent',
-            }
-            for d in rem_destinations
-          ],
-        },
-      },
-    },
-  }
-  for name in std.objectFields(params.staticRoutes)
-  if params.staticRoutes[name] != null
-];
-
-local validate(policies) = std.objectValues(std.foldl(
-  function(seen, p)
-    local name =
-      p.metadata.name;
-    if std.objectHas(seen, name) then
-      error 'duplicated policy name "%s" in parameters `policies` and `staticRoutes`' % [
-        name,
-      ]
-    else
-      seen {
-        [name]: p,
-      },
-  policies,
-  {}
-));
-
 {
   '00_namespace': namespace,
   '10_operator_group': operator_group,
   '10_subscription': subscription,
   '20_nmstate_instance': instance,
   '30_console_plugin_netpol': console_plugin_netpol,
-  '40_policies': validate(policies + static_routes),
 }
