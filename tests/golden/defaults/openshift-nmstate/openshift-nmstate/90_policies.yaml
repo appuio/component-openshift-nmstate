@@ -4,6 +4,341 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   labels:
+    name: infra-egress-interface
+  name: infra-egress-interface
+spec:
+  desiredState:
+    interfaces:
+      - ipv4:
+          address:
+            - ip: 192.0.2.1
+              prefix-length: 29
+            - ip: 192.0.2.2
+              prefix-length: 29
+            - ip: 192.0.2.3
+              prefix-length: 29
+            - ip: 192.0.2.4
+              prefix-length: 29
+            - ip: 192.0.2.5
+              prefix-length: 29
+            - ip: 192.0.2.6
+              prefix-length: 29
+            - ip: 192.0.2.7
+              prefix-length: 29
+          dhcp: false
+          enabled: true
+        name: egress
+        type: dummy
+  nodeSelector:
+    node-role.kubernetes.io/infra: ''
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  labels:
+    name: infra-egress-interfaces
+  name: infra-egress-interfaces
+spec:
+  desiredState:
+    interfaces:
+      - ipv4:
+          address:
+            - ip: 192.0.2.8
+              prefix-length: 29
+          dhcp: false
+          enabled: true
+        name: egress_0
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 192.0.2.9
+              prefix-length: 29
+          dhcp: false
+          enabled: true
+        name: egress_1
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 192.0.2.10
+              prefix-length: 29
+          dhcp: false
+          enabled: true
+        name: egress_2
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 192.0.2.11
+              prefix-length: 29
+          dhcp: false
+          enabled: true
+        name: egress_3
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 192.0.2.12
+              prefix-length: 29
+          dhcp: false
+          enabled: true
+        name: egress_4
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 192.0.2.13
+              prefix-length: 29
+          dhcp: false
+          enabled: true
+        name: egress_5
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 192.0.2.14
+              prefix-length: 29
+          dhcp: false
+          enabled: true
+        name: egress_6
+        type: dummy
+  nodeSelector:
+    node-role.kubernetes.io/infra: ''
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  labels:
+    name: infra-shadow-interfaces-infra-1111
+  name: infra-shadow-interfaces-infra-1111
+spec:
+  desiredState:
+    - ipv4:
+        address:
+          - ip: 203.0.113.0
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_0
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.1
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_1
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.2
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_2
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.3
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_3
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.4
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_4
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.5
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_5
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.6
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_6
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.7
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_7
+      type: dummy
+  nodeSelector:
+    kubernetes.io/hostname: infra-1111
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  labels:
+    name: infra-shadow-interfaces-infra-1234
+  name: infra-shadow-interfaces-infra-1234
+spec:
+  desiredState:
+    - ipv4:
+        address:
+          - ip: 203.0.113.8
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_0
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.9
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_1
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.10
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_2
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.11
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_3
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.12
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_4
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.13
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_5
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.14
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_6
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.15
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_7
+      type: dummy
+  nodeSelector:
+    kubernetes.io/hostname: infra-1234
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  labels:
+    name: infra-shadow-interfaces-infra-abcd
+  name: infra-shadow-interfaces-infra-abcd
+spec:
+  desiredState:
+    - ipv4:
+        address:
+          - ip: 203.0.113.16
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_0
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.17
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_1
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.18
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_2
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.19
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_3
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.20
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_4
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.21
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_5
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.22
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_6
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.23
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_7
+      type: dummy
+  nodeSelector:
+    kubernetes.io/hostname: infra-abcd
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  labels:
     name: infra-static-routes
   name: infra-static-routes
 spec:

@@ -4,6 +4,9 @@ parameters:
       - type: https
         source: https://raw.githubusercontent.com/appuio/component-openshift4-operators/v1.0.2/lib/openshift4-operators.libsonnet
         output_path: vendor/lib/openshift4-operators.libsonnet
+      - type: https
+        source: https://raw.githubusercontent.com/projectsyn/component-cilium/refs/heads/master/lib/cilium-ipcalc.libsonnet
+        output_path: vendor/lib/cilium-ipcalc.libsonnet
 
   openshift4_operators:
     defaultSourceNamespace: openshift-marketplace
@@ -31,3 +34,24 @@ parameters:
         config:
           next-hop-address: 172.18.200.20
           next-hop-interface: ens3
+
+    egressIPRanges:
+      infra-egress-interface:
+        egressCIDR: 192.0.2.0/29
+        interface_name: egress
+        skipFirst: true
+        nodeSelector:
+          node-role.kubernetes.io/infra: ''
+      infra-egress-interfaces:
+        egressCIDR: 192.0.2.8/29
+        interface_prefix: egress
+        skipLast: true
+        nodeSelector:
+          node-role.kubernetes.io/infra: ''
+      infra-shadow-interfaces:
+        egressCIDR: 192.0.2.16/29
+        interface_prefix: shadow
+        shadowCIDRs:
+          infra-1111: 203.0.113.0/29
+          infra-1234: 203.0.113.8/29
+          infra-abcd: 203.0.113.16/29
