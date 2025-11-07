@@ -25,19 +25,21 @@ local static_routes = [
   local add_destinations = [ d for d in destinations if !std.startsWith(d, '~') ];
   // use d[1:] for rem destinations since they're prefixed with ~
   local rem_destinations = [ d[1:] for d in cfg.destinations if std.startsWith(d, '~') ];
+  local route_for_dest(d) = {
+    metric: 100,
+  } + com.makeMergeable(cfg.config) {
+    destination: d,
+  };
   NodeNetworkConfigurationPolicy(name) {
     spec: {
       nodeSelector: cfg.nodeSelector,
       desiredState: {
         routes: {
           config: [
-            cfg.config {
-              destination: d,
-            }
+            route_for_dest(d)
             for d in add_destinations
           ] + [
-            cfg.config {
-              destination: d,
+            route_for_dest(d) {
               state: 'absent',
             }
             for d in rem_destinations
