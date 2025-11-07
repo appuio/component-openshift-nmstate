@@ -1,0 +1,254 @@
+= Inspecting network state on a cluster
+
+[abstract]
+This how-to summarizes how an operator can inspect the network state on a cluster.
+
+== Prerequisites
+
+* `cluster-reader` level access to the target cluster
+* `kubectl`
+
+== Inspecting node network status
+
+. Read the node's `NodeNetworkState` resource
++
+[source,bash]
+----
+NODE=<the-node>
+
+kubectl get nns $NODE -oyaml
+----
+
+. Inspect the part of the output you're interested in.
+See the annotated example output below for details.
++
+[source,yaml]
+----
+apiVersion: nmstate.io/v1beta1
+kind: NodeNetworkState
+metadata:
+  creationTimestamp: "2025-11-05T09:35:27Z"
+  generation: 1
+  labels:
+    nmstate.io/force-nns-refresh: "1762503772860273069"
+  name: infra-8344
+  ownerReferences:
+  - apiVersion: v1
+    kind: Node
+    name: infra-8344
+    uid: eb0da780-64eb-4350-819e-8538c8bcc314
+  resourceVersion: "2855994759"
+  uid: a5b6136c-8fe4-4cbb-b922-09a95efaa4fc
+status:
+  currentState: <1>
+    dns-resolver: <2>
+      config:
+        search: null
+        server: null
+      running:
+        search: null
+        server:
+        - 5.102.144.101
+        - 5.102.144.102
+    interfaces: <3>
+    - accept-all-mac-addresses: false
+      ethtool:
+        feature:
+          # omitted
+      ipv4:
+        address:
+        - ip: 172.18.200.64
+          prefix-length: 32
+        enabled: true
+        forwarding: true
+      ipv6:
+        enabled: false
+      mac-address: 86:DA:F1:14:CC:13
+      mptcp:
+        address-flags: []
+      mtu: 1500
+      name: bgp_0
+      state: ignore
+      type: dummy
+    - accept-all-mac-addresses: false
+      ethtool:
+        feature:
+          # omitted
+      ipv4:
+        enabled: false
+        forwarding: true
+      ipv6:
+        address:
+        - ip: fe80::84a9:b1ff:feb6:a50d
+          prefix-length: 64
+        enabled: true
+      mac-address: 86:A9:B1:B6:A5:0D
+      max-mtu: 65535
+      min-mtu: 68
+      mtu: 9000
+      name: cilium_vxlan
+      state: ignore
+      type: vxlan
+      vxlan:
+        destination-port: 8472
+        id: 0
+        learning: false
+    - accept-all-mac-addresses: false
+      alt-names:
+      - name: enp0s3
+      driver: virtio_net
+      ethernet:
+        auto-negotiation: false
+      ethtool: <4>
+        coalesce:
+          rx-frames: 1
+          rx-usecs: 0
+          tx-frames: 1
+          tx-usecs: 0
+        feature:
+          rx-gro: true
+          rx-gro-hw: true
+          rx-gro-list: false
+          rx-udp-gro-forwarding: false
+          tx-checksum-ip-generic: true
+          tx-generic-segmentation: true
+          tx-nocache-copy: false
+          tx-tcp-ecn-segmentation: true
+          tx-tcp-mangleid-segmentation: false
+          tx-tcp-segmentation: true
+          tx-tcp6-segmentation: true
+        ring:
+          rx: 256
+          rx-max: 256
+          tx: 256
+          tx-max: 256
+      identifier: name
+      ipv4:
+        address:
+        - ip: 172.18.200.254
+          preferred-life-time: 79802sec
+          prefix-length: 24
+          valid-life-time: 79802sec
+        - ip: 172.18.200.60
+          prefix-length: 32
+        auto-dns: true
+        auto-gateway: true
+        auto-route-table-id: 0
+        auto-routes: true
+        dhcp: true
+        dhcp-client-id: ll
+        dhcp-send-hostname: true
+        enabled: true
+        forwarding: true
+      ipv6:
+        addr-gen-mode: stable-privacy
+        address:
+        - ip: fe80::49d1:90df:c2c2:85b4
+          prefix-length: 64
+        auto-dns: true
+        auto-gateway: true
+        auto-route-table-id: 0
+        auto-routes: true
+        autoconf: true
+        dhcp: true
+        dhcp-duid: ll
+        dhcp-send-hostname: true
+        enabled: true
+      lldp:
+        enabled: false
+      mac-address: FA:16:3E:06:0F:0E
+      max-mtu: 9000
+      min-mtu: 68
+      mptcp:
+        address-flags: []
+      mtu: 9000
+      name: ens3
+      permanent-mac-address: FA:16:3E:06:0F:0E
+      profile-name: Wired connection 1
+      state: up
+      type: ethernet
+      wait-ip: any
+    - accept-all-mac-addresses: false
+      ethtool:
+        feature:
+          # omitted
+      ipv4:
+        address:
+        - ip: 127.0.0.1
+          prefix-length: 8
+        enabled: true
+        forwarding: true
+      ipv6:
+        address:
+        - ip: ::1
+          prefix-length: 128
+        enabled: true
+      mac-address: "00:00:00:00:00:00"
+      mtu: 65536
+      name: lo
+      state: up
+      type: loopback
+    ovn: {} <5>
+    routes: <6>
+      config: [] <7>
+      running: <8>
+      - destination: 0.0.0.0/0
+        metric: 100
+        next-hop-address: 172.18.200.1
+        next-hop-interface: ens3
+        source: 172.18.200.254
+        table-id: 254
+      - destination: 169.254.169.254/32
+        metric: 100
+        next-hop-address: 172.18.200.102
+        next-hop-interface: ens3
+        source: 172.18.200.254
+        table-id: 254
+  handlerNmstateVersion: nmstatectl 2.2.54 <9>
+  hostNetworkManagerVersion: 1.52.0 <10>
+  lastSuccessfulUpdateTime: "2025-11-07T12:43:23Z" <11>
+----
+<1> `status.currentState` contains the node's current network state.
+<2> `status.currentState.dns-resolver` shows the node's current DNS resolution config.
+<3> `status.currentState.interfaces` shows the node's current additional network interfaces.
+<4> `status.currentState.interfaces[].ethtool` shows each interface's configurable features.
+<5> `status.currentState.ovn` shows the node's current OVN (open vSwitch networking) configuration.
+This will most likely be empty on Clusters which don't use OVN-Kubernetes as the network plugin.
+<6> `status.currentState.routes` shows the node's current primary routing table.
+The field would also show any non-default routing tables which have entries that are managed by NMState operator.
+<7> `status.currentState.route.config` shows the node's routing configuration which is actively managed by NMState Operator.
+<8> `status.currentState.route.running` shows the node's currently active ("running") routing configuration.
+<9> `status.handlerNmstateVersion` shows the version of `nmstatectl` that the NMState Operator `handler` pod on the node is using.
+<10> `status.hostNetworkManagerVersion` shows the node's NetworkManager version.
+<11> `status.lastSuccessfulUpdateTime` shows the last time the `NodeNetworkState` has been updated successfully.
+
+== Inspecting Node configuration resources
+
+. Get an overview over deployed `NodeNetworkConfigurationPolicy` resources
++
+[source,bash]
+----
+$ kubectl get nncp
+NAME                  STATUS      REASON
+infra-static-routes   Available   SuccessfullyConfigured
+----
+
+. Get an overview over the `NodeNetowrkConfigurationEnactment` resources
++
+TIP: The NMState Operator generates one NNCE for each node that's selected by a NNCP's node selector.
++
+[source,bash]
+----
+$ kubectl get nnce
+NAME                             STATUS      STATUS AGE   REASON
+infra-8344.infra-static-routes   Available   47h          SuccessfullyConfigured
+infra-87c9.infra-static-routes   Available   23h          SuccessfullyConfigured
+infra-eba2.infra-static-routes   Available   47h          SuccessfullyConfigured
+----
++
+[TIP]
+====
+NNCE can provide valuable information for NNCPs which don't currently get applied successfully.
+
+Check `status.conditions` for error messages from `nmstatectl`.
+====
