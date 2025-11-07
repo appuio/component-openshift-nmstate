@@ -1,5 +1,5 @@
 = openshift-nmstate
 
-openshift-nmstate is a Commodore component to manage openshift-nmstate.
+openshift-nmstate is a Commodore component to manage the https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/networking_operators/k8s-nmstate-about-the-k8s-nmstate-operator[OpenShift NMState operator]
 
 See the xref:references/parameters.adoc[parameters] reference for further details.

@@ -2,18 +2,637 @@
 
 The parent key for all of the following parameters is `openshift_nmstate`.
 
-== `namespace`
+== `_namespace`
 
 [horizontal]
 type:: string
-default:: `syn-openshift-nmstate`
+default:: `openshift-nmstate`
 
 The namespace in which to deploy this component.
 
+[NOTE]
+====
+The nmstate-olm-operator unconditionally installs the nmstate instance in namespace `openshift-nmstate`, so the component disallows modifying this parameter.
+====
 
-== Example
+== `olm`
+
+The component configures an `OperatorGroup` and `Subscription` to install the OpenShift NMState Operator via OLM.
+This section allows configuring the channel and install plan approval method for the `Subscription`.
+
+=== `olm.channel`
+
+[horizontal]
+type:: string
+default:: `"stable"`
+
+The channel from which to install the operator.
+
+=== `olm.installPlanApproval`
+
+[horizontal]
+type:: string
+default:: `"Automatic"`
+
+Whether to automatically install new versions of the operator.
+
+== `config`
+
+[horizontal]
+type:: object
+default:: `{}`
+
+The component always creates one `NMState` instance.
+The instance is named `nmstate`.
+
+This parameter can be used to customize the instance.
+The value is expected to be a valid partial Kubernetes manifest and is merged into the `NMState` resource as-is.
+
+See the https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/networking_operators/k8s-nmstate-about-the-k8s-nmstate-operator[upstream documentation] for supported fields.
+
+== `policies`
+
+[horizontal]
+type:: object
+default:: `{}`
+
+This parameter allows users to define arbitrary `NodeNetworkConfigurationPolicy` (NNCP) resources.
+Each key value pair in this parameter is converted into a `NodeNetworkConfigurationPolicy` with the key used as `metadata.name` and the value merged into the resource as-is.
+Keys with value `null` are skipped.
+
+NNCPs support targeting selected nodes via `spec.nodeSelector`.
+This field expects one or more label key-value pairs.
+To target individual nodes you can use label `kubernetes.io/hostname`.
+
+NNCPs support defining tehe maximum number of nodes where configurations are applied simultaneously via `spec.maxUnavailable`.
+If this field isn't set explicitly, it defaults to `50%`.
+
+The NMState configuration is provided in field `spec.desiredState`.
+See the https://nmstate.io/kubernetes-nmstate/examples.html[upstream documentation] and https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/kubernetes_nmstate/k8s-nmstate-updating-node-network-config[OpenShift documentation] for example configurations.
+
+NOTE: The component doesn't validate the contents of the values.
+
+See the https://nmstate.io/kubernetes-nmstate/user-guide/102-configuration.html[upstream documentation] for supported configurations.
+
+[IMPORTANT]
+====
+The NMState Operator will leave previously applied configurations untouched if they're simply removed from the configuration.
+
+To actually remove configurations from nodes, they need to be present in the NNCP with `state: absent`.
+====
+
+NOTE: The component will raise an error if any two policies configured in one of the policy generation parameters (`policies`, `staticRoutes`, and `egressIPRanges`) have the same name.
+
+=== Example
+
+.Config
+[source,yaml]
+----
+openshift_nmstate:
+  policies:
+    infra-static-routes:
+      spec:
+        nodeSelector:
+          node-role.kubernetes.io/infra: ''
+        desiredState:
+          routes:
+            config:
+              - destination: 198.51.100.0/24
+                next-hop-address: 172.18.200.20
+                next-hop-interface: ens3
+----
+
+This configuration results in the following NNCP.
 
 [source,yaml]
 ----
-namespace: example-namespace
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  labels:
+    name: infra-static-routes
+  name: infra-static-routes
+spec:
+  desiredState:
+    routes:
+      config:
+        - destination: 198.51.100.0/24
+          next-hop-address: 172.18.200.20
+          next-hop-interface: ens3
+  nodeSelector:
+    node-role.kubernetes.io/infra: ''
+----
+
+== `staticRoutes`
+
+[horizontal]
+type:: object
+default:: `{}`
+
+This parameter allows users to create NNCPs which deploy static routes more concisely.
+Each key value pair in the parameter is translated into a NNCP which configures static routes.
+The component uses the keys as `metadata.name` for the resulting NNCPs.
+Keys with value `null` are skipped.
+The component expects the value to have keys `config`, `destinations`, and `nodeSelector`.
+Keys `nodeSelector` and `config` are expected to hold objects.
+Key `destinations` is expected to be a list.
+
+The component creates an entry in `spec.desiredState.routes.config` for each entry in `destinations`.
+The contents of key `config` are used as the base configuration for these entries.
+The component will always overwrite field `destination` with the entries of `destinations`.
+
+The component supports removing individual routes in the `destinations` list.
+To remove a previously applied route, prefix it with `~` in the `destinations` list.
+Entries in the `destinations` list which are prefixed with `~` are configured with `state: absent` in the resulting NNCP.
+
+TIP: To fully remove a set of static routes, you can set `state: absent` in field `config`.
+
+=== Example
+
+.Config
+[source,yaml]
+----
+openshift_nmstate:
+  staticRoutes:
+    infra-static-routes-2:
+      nodeSelector:
+        node-role.kubernetes.io/infra: ''
+      destinations:
+        - 203.0.113.0/25
+        - ~203.0.113.128/25
+      config:
+        next-hop-address: 172.18.200.20
+        next-hop-interface: ens3
+----
+
+This configuration results in the following NNCP.
+
+[source,yaml]
+----
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  labels:
+    name: infra-static-routes-2
+  name: infra-static-routes-2
+spec:
+  desiredState:
+    routes:
+      config:
+        - destination: 203.0.113.0/25
+          metric: 100
+          next-hop-address: 172.18.200.20
+          next-hop-interface: ens3
+        - destination: 203.0.113.128/25
+          metric: 100
+          next-hop-address: 172.18.200.20
+          next-hop-interface: ens3
+          state: absent
+  nodeSelector:
+    node-role.kubernetes.io/infra: ''
+----
+
+== `egressIPRanges`
+
+[horizontal]
+type:: object
+default:: `{}`
+
+This parameter allows users to create NNCPs which deploy additional dummy interfaces with arbitrary IPs more concisely.
+
+TIP: This parameter is currently primarily designed to support Cilium's Egress Gateway feature which requires that all egress IPs are assigned to an interface on the node.
+
+Each key value pair in the parameter is translated into a NNCP which configures one or more interfaes which are assigned the desired IP(s).
+The component uses the keys as `metadata.name` for the resulting NNCPs.
+Keys with value `null` are skipped.
+The component expects the value to have keys `egressCIDR`, `interface_name`, `interface_prefix`, `nodeSelector`, `shadowCIDRs`, `skipFirst`, and `skipLast`.
+Keys `interface_name` and `interface_prefix` are mutually exclusive.
+Keys `nodeSelector` and `shadowCIDRs` are mutually exclusive.
+The component expects key `shadowCIDRs` to hold an object mapping node names to shadow IP ranges.
+Keys `skipFirst` and `skipLast` are optional.
+These two keys are expected to be booleans and default to `false` if not provided.
+
+[TIP]
+====
+See https://hub.syn.tools/cilium/references/parameters.html#_egress_gateway_egress_ip_ranges[component-cilium's `egress_gateway.egress_ip_ranges`] for a more detailed explanation of the shadow CIDR/shadow IP range concept.
+
+This parameter provides an alternative to the existing https://hub.syn.tools/openshift4-nodes/references/parameters.html#_egressinterfaces[`egressInterfaces` mechanism in `openshift4-nodes`] which manages shadow range egress interfaces via custom scripts deployed to the infra nodes through `MachineConfiguration` objects.
+====
+
+When key `interface_name` is present, the component will generate a NNCP which assigns all egress IPs in the range defined by `egressCIDR` to a single interface with name `interface_name`.
+Alternatively, when key `interface_prefix` is present, the component will generate a NNCP which creates an interface named `<interface_prefix>_N` for each IP in the range defined by `egressCIDR`.
+
+When key `nodeSelector` is present, the component deploys the same set of interfaces on all nodes targeted by the selector.
+Alternatively, when `shadowCIDRs` is present, the component creates separate per-node NNCPs, each of which creates one or many interfaces which are assigned the IPs in the range defined by the node's entry in `shadowCIDRs`.
+
+When setting `skipFirst: true`, the component won't configure the provided CIDR's network address on the nodes.
+When setting `skipLast: true`, the component won't configure the provided CIDR's broadcast address on the nodes.
+
+[NOTE]
+====
+The component currently doesn't raise an error if multiple policies defined through this parameter use the same interface names.
+
+As far as we know, the NMState Operator will gracefully merge configurations defined in multiple NNCPs which target the same interface.
+====
+
+=== Examples
+
+==== Single interface on all infra nodes
+
+.Config
+[source,yaml]
+----
+openshift_nmstate:
+  infra-egress-interface:
+    egressCIDR: 192.0.2.0/29
+    interface_name: egress
+    skipFirst: true <1>
+    nodeSelector:
+      node-role.kubernetes.io/infra: ''
+----
+<1> Setting `skipFirst: true` will omit the network address for the given CIDR (`192.0.2.7` for this example) when configuring the interfaces.
+
+This configuration results in the following NNCP.
+
+[source,yaml]
+----
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  labels:
+    name: infra-egress-interface
+  name: infra-egress-interface
+spec:
+  desiredState:
+    interfaces:
+      - ipv4:
+          address:
+            - ip: 192.0.2.1
+              prefix-length: 29
+            - ip: 192.0.2.2
+              prefix-length: 29
+            - ip: 192.0.2.3
+              prefix-length: 29
+            - ip: 192.0.2.4
+              prefix-length: 29
+            - ip: 192.0.2.5
+              prefix-length: 29
+            - ip: 192.0.2.6
+              prefix-length: 29
+            - ip: 192.0.2.7
+              prefix-length: 29
+          dhcp: false
+          enabled: true
+        name: egress
+        type: dummy
+  nodeSelector:
+    node-role.kubernetes.io/infra: ''
+----
+
+==== Multiple interfaces on all infra nodes
+
+.Config
+[source,yaml]
+----
+openshift_nmstate:
+  infra-egress-interfaces:
+    egressCIDR: 192.0.2.8/29
+    interface_prefix: egress
+    skipLast: true <1>
+    nodeSelector:
+      node-role.kubernetes.io/infra: ''
+----
+<1> Setting `skipLast: true` will omit the broadcast address for the given CIDR (`192.0.2.7` for this example) when configuring the interfaces.
+
+This configuration results in the following NNCP.
+
+[source,yaml]
+----
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  labels:
+    name: infra-egress-interfaces
+  name: infra-egress-interfaces
+spec:
+  desiredState:
+    interfaces:
+      - ipv4:
+          address:
+            - ip: 192.0.2.8
+              prefix-length: 29
+          dhcp: false
+          enabled: true
+        name: egress_0
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 192.0.2.9
+              prefix-length: 29
+          dhcp: false
+          enabled: true
+        name: egress_1
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 192.0.2.10
+              prefix-length: 29
+          dhcp: false
+          enabled: true
+        name: egress_2
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 192.0.2.11
+              prefix-length: 29
+          dhcp: false
+          enabled: true
+        name: egress_3
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 192.0.2.12
+              prefix-length: 29
+          dhcp: false
+          enabled: true
+        name: egress_4
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 192.0.2.13
+              prefix-length: 29
+          dhcp: false
+          enabled: true
+        name: egress_5
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 192.0.2.14
+              prefix-length: 29
+          dhcp: false
+          enabled: true
+        name: egress_6
+        type: dummy
+  nodeSelector:
+    node-role.kubernetes.io/infra: ''
+----
+
+==== Multiple interfaces with separate IP ranges on each node
+
+.Config
+[source,yaml]
+----
+openshift_nmstate:
+  infra-shadow-interfaces:
+    egressCIDR: 192.0.2.16/29
+    interface_prefix: shadow
+    shadowCIDRs:
+      infra-1111: 203.0.113.0/29
+      infra-1234: 203.0.113.8/29
+      infra-abcd: 203.0.113.16/29
+----
+
+This configuration results in the following NNCPs.
+
+[source,yaml]
+----
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  labels:
+    name: infra-shadow-interfaces-infra-1111
+  name: infra-shadow-interfaces-infra-1111
+spec:
+  desiredState:
+    - ipv4:
+        address:
+          - ip: 203.0.113.0
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_0
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.1
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_1
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.2
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_2
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.3
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_3
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.4
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_4
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.5
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_5
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.6
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_6
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.7
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_7
+      type: dummy
+  nodeSelector:
+    kubernetes.io/hostname: infra-1111
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  labels:
+    name: infra-shadow-interfaces-infra-1234
+  name: infra-shadow-interfaces-infra-1234
+spec:
+  desiredState:
+    - ipv4:
+        address:
+          - ip: 203.0.113.8
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_0
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.9
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_1
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.10
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_2
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.11
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_3
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.12
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_4
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.13
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_5
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.14
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_6
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.15
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_7
+      type: dummy
+  nodeSelector:
+    kubernetes.io/hostname: infra-1234
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  labels:
+    name: infra-shadow-interfaces-infra-abcd
+  name: infra-shadow-interfaces-infra-abcd
+spec:
+  desiredState:
+    - ipv4:
+        address:
+          - ip: 203.0.113.16
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_0
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.17
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_1
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.18
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_2
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.19
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_3
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.20
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_4
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.21
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_5
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.22
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_6
+      type: dummy
+    - ipv4:
+        address:
+          - ip: 203.0.113.23
+            prefix-length: 29
+        dhcp: false
+        enabled: true
+      name: shadow_7
+      type: dummy
+  nodeSelector:
+    kubernetes.io/hostname: infra-abcd
 ----
