@@ -8,7 +8,7 @@ local inv = kap.inventory();
 local params = inv.parameters.openshift_nmstate;
 
 local NodeNetworkConfigurationPolicy(name) =
-  kube._Object('nmstate.io/v1', 'NodeNetworkConfigurationPolicy', name) {
+  kube._Object('nmstate.io/v1', 'NodeNetworkConfigurationPolicy', kube.hyphenate(name)) {
     metadata+: {
       annotations+: {
         'argocd.argoproj.io/sync-options': 'SkipDryRunOnMissingResource=true',
