@@ -66,7 +66,7 @@ local egress_ip_ranges =
         enabled: true,
         address: [],
       },
-    };
+    } + com.makeMergeable(std.get(cfg, 'ifConfig', {}));
     local addressEntry(idx) = {
       ip: ipcalc.format_ipval(ipcalc.ipval(cidr_range.network_address) + idx),
       'prefix-length': cidr_range.prefix_length,
