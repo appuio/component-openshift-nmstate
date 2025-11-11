@@ -1,3 +1,66 @@
-# Overwrite parameters here
+parameters:
+  kapitan:
+    dependencies:
+      - type: https
+        source: https://raw.githubusercontent.com/appuio/component-openshift4-operators/v1.0.2/lib/openshift4-operators.libsonnet
+        output_path: vendor/lib/openshift4-operators.libsonnet
+      - type: https
+        source: https://raw.githubusercontent.com/projectsyn/component-cilium/refs/heads/master/lib/cilium-ipcalc.libsonnet
+        output_path: vendor/lib/cilium-ipcalc.libsonnet
 
-# parameters: {...}
+  openshift4_operators:
+    defaultSourceNamespace: openshift-marketplace
+
+  openshift_nmstate:
+    policies:
+      infra-static-routes:
+        spec:
+          nodeSelector:
+            node-role.kubernetes.io/infra: ''
+          desiredState:
+            routes:
+              config:
+                - destination: 198.51.100.0/24
+                  next-hop-address: 172.18.200.20
+                  next-hop-interface: ens3
+
+    staticRoutes:
+      infra-static-routes-2:
+        nodeSelector:
+          node-role.kubernetes.io/infra: ''
+        destinations:
+          - 203.0.113.0/25
+          - ~203.0.113.128/25
+        config:
+          next-hop-address: 172.18.200.20
+          next-hop-interface: ens3
+      infra-static-routes-3:
+        nodeSelector:
+          node-role.kubernetes.io/infra: ''
+        destinations:
+          - 203.0.113.0/25
+        config:
+          next-hop-address: 172.18.200.23
+          next-hop-interface: ens3
+          metric: 500
+
+    egressIPRanges:
+      infra-egress-interface:
+        egressCIDR: 192.0.2.0/29
+        interface_name: egress
+        skipFirst: true
+        nodeSelector:
+          node-role.kubernetes.io/infra: ''
+      infra-egress-interfaces:
+        egressCIDR: 192.0.2.8/29
+        interface_prefix: egress
+        skipLast: true
+        nodeSelector:
+          node-role.kubernetes.io/infra: ''
+      infra-shadow-interfaces:
+        egressCIDR: 192.0.2.16/29
+        interface_prefix: shadow
+        shadowCIDRs:
+          infra-1111: 203.0.113.0/29
+          infra-1234: 203.0.113.8/29
+          infra-abcd: 203.0.113.16/29

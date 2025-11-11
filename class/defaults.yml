@@ -2,4 +2,19 @@ parameters:
   openshift_nmstate:
     =_metadata:
       multi_tenant: true
-    namespace: syn-openshift-nmstate
+
+    # The operator will unconditionally install the instance in namespace
+    # `openshift-nmstate`, so we don't even try to fight against that.
+    =_namespace: openshift-nmstate
+
+    olm:
+      channel: stable
+      installPlanApproval: Automatic
+
+    config: {}
+
+    policies: {}
+
+    staticRoutes: {}
+
+    egressIPRanges: {}
