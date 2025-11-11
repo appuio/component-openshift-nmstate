@@ -69,7 +69,9 @@ local egress_ip_ranges =
     } + com.makeMergeable(std.get(cfg, 'ifConfig', {}));
     local addressEntry(idx) = {
       ip: ipcalc.format_ipval(ipcalc.ipval(cidr_range.network_address) + idx),
-      'prefix-length': cidr_range.prefix_length,
+      // Always configure each IP with `prefix-length=32` to avoid setting up
+      // a multitude of routes for the interface.
+      'prefix-length': 32,
     };
     // std.range() doesn't like big integers, so we do `[0, count)` instead of
     // `[start,end)`.

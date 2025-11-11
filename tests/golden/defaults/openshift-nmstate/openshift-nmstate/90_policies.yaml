@@ -12,19 +12,19 @@ spec:
       - ipv4:
           address:
             - ip: 192.0.2.1
-              prefix-length: 29
+              prefix-length: 32
             - ip: 192.0.2.2
-              prefix-length: 29
+              prefix-length: 32
             - ip: 192.0.2.3
-              prefix-length: 29
+              prefix-length: 32
             - ip: 192.0.2.4
-              prefix-length: 29
+              prefix-length: 32
             - ip: 192.0.2.5
-              prefix-length: 29
+              prefix-length: 32
             - ip: 192.0.2.6
-              prefix-length: 29
+              prefix-length: 32
             - ip: 192.0.2.7
-              prefix-length: 29
+              prefix-length: 32
           dhcp: false
           enabled: true
         name: egress
@@ -46,7 +46,7 @@ spec:
       - ipv4:
           address:
             - ip: 192.0.2.8
-              prefix-length: 29
+              prefix-length: 32
           dhcp: false
           enabled: true
         name: egress_0
@@ -54,7 +54,7 @@ spec:
       - ipv4:
           address:
             - ip: 192.0.2.9
-              prefix-length: 29
+              prefix-length: 32
           dhcp: false
           enabled: true
         name: egress_1
@@ -62,7 +62,7 @@ spec:
       - ipv4:
           address:
             - ip: 192.0.2.10
-              prefix-length: 29
+              prefix-length: 32
           dhcp: false
           enabled: true
         name: egress_2
@@ -70,7 +70,7 @@ spec:
       - ipv4:
           address:
             - ip: 192.0.2.11
-              prefix-length: 29
+              prefix-length: 32
           dhcp: false
           enabled: true
         name: egress_3
@@ -78,7 +78,7 @@ spec:
       - ipv4:
           address:
             - ip: 192.0.2.12
-              prefix-length: 29
+              prefix-length: 32
           dhcp: false
           enabled: true
         name: egress_4
@@ -86,7 +86,7 @@ spec:
       - ipv4:
           address:
             - ip: 192.0.2.13
-              prefix-length: 29
+              prefix-length: 32
           dhcp: false
           enabled: true
         name: egress_5
@@ -94,7 +94,7 @@ spec:
       - ipv4:
           address:
             - ip: 192.0.2.14
-              prefix-length: 29
+              prefix-length: 32
           dhcp: false
           enabled: true
         name: egress_6
@@ -115,7 +115,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.0
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_0
@@ -123,7 +123,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.1
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_1
@@ -131,7 +131,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.2
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_2
@@ -139,7 +139,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.3
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_3
@@ -147,7 +147,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.4
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_4
@@ -155,7 +155,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.5
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_5
@@ -163,7 +163,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.6
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_6
@@ -171,7 +171,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.7
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_7
@@ -192,7 +192,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.8
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_0
@@ -200,7 +200,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.9
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_1
@@ -208,7 +208,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.10
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_2
@@ -216,7 +216,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.11
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_3
@@ -224,7 +224,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.12
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_4
@@ -232,7 +232,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.13
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_5
@@ -240,7 +240,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.14
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_6
@@ -248,7 +248,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.15
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_7
@@ -269,7 +269,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.16
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_0
@@ -277,7 +277,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.17
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_1
@@ -285,7 +285,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.18
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_2
@@ -293,7 +293,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.19
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_3
@@ -301,7 +301,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.20
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_4
@@ -309,7 +309,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.21
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_5
@@ -317,7 +317,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.22
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_6
@@ -325,7 +325,7 @@ spec:
     - ipv4:
         address:
           - ip: 203.0.113.23
-            prefix-length: 29
+            prefix-length: 32
         dhcp: false
         enabled: true
       name: shadow_7
