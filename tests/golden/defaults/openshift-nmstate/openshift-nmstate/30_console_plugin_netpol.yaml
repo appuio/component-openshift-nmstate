@@ -8,13 +8,13 @@ metadata:
 spec:
   ingress:
     - from:
-        - podSelector:
-            matchLabels:
-              app: console
-              component: ui
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: openshift-console
+          podSelector:
+            matchLabels:
+              app: console
+              component: ui
       ports:
         - port: 9443
           protocol: TCP

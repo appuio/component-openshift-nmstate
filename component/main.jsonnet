@@ -40,10 +40,10 @@ local console_plugin_netpol =
   kube.NetworkPolicy('allow-console-console-nmstate-plugin') {
     spec: {
       ingress: [ {
-        from: [
-          { podSelector: { matchLabels: { app: 'console', component: 'ui' } } },
-          { namespaceSelector: { matchLabels: { 'kubernetes.io/metadata.name': 'openshift-console' } } },
-        ],
+        from: [ {
+          podSelector: { matchLabels: { app: 'console', component: 'ui' } },
+          namespaceSelector: { matchLabels: { 'kubernetes.io/metadata.name': 'openshift-console' } },
+        } ],
         ports: [ { port: 9443, protocol: 'TCP' } ],
       } ],
       podSelector: {
