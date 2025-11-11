@@ -112,70 +112,71 @@ metadata:
   name: infra-shadow-interfaces-infra-1111
 spec:
   desiredState:
-    - ipv4:
-        address:
-          - ip: 203.0.113.0
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_0
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.1
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_1
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.2
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_2
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.3
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_3
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.4
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_4
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.5
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_5
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.6
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_6
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.7
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_7
-      type: dummy
+    interfaces:
+      - ipv4:
+          address:
+            - ip: 203.0.113.0
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_0
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.1
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_1
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.2
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_2
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.3
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_3
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.4
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_4
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.5
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_5
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.6
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_6
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.7
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_7
+        type: dummy
   nodeSelector:
     kubernetes.io/hostname: infra-1111
 ---
@@ -189,70 +190,71 @@ metadata:
   name: infra-shadow-interfaces-infra-1234
 spec:
   desiredState:
-    - ipv4:
-        address:
-          - ip: 203.0.113.8
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_0
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.9
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_1
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.10
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_2
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.11
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_3
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.12
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_4
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.13
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_5
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.14
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_6
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.15
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_7
-      type: dummy
+    interfaces:
+      - ipv4:
+          address:
+            - ip: 203.0.113.8
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_0
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.9
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_1
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.10
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_2
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.11
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_3
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.12
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_4
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.13
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_5
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.14
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_6
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.15
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_7
+        type: dummy
   nodeSelector:
     kubernetes.io/hostname: infra-1234
 ---
@@ -266,70 +268,71 @@ metadata:
   name: infra-shadow-interfaces-infra-abcd
 spec:
   desiredState:
-    - ipv4:
-        address:
-          - ip: 203.0.113.16
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_0
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.17
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_1
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.18
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_2
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.19
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_3
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.20
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_4
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.21
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_5
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.22
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_6
-      type: dummy
-    - ipv4:
-        address:
-          - ip: 203.0.113.23
-            prefix-length: 32
-        dhcp: false
-        enabled: true
-      name: shadow_7
-      type: dummy
+    interfaces:
+      - ipv4:
+          address:
+            - ip: 203.0.113.16
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_0
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.17
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_1
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.18
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_2
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.19
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_3
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.20
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_4
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.21
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_5
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.22
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_6
+        type: dummy
+      - ipv4:
+          address:
+            - ip: 203.0.113.23
+              prefix-length: 32
+          dhcp: false
+          enabled: true
+        name: shadow_7
+        type: dummy
   nodeSelector:
     kubernetes.io/hostname: infra-abcd
 ---

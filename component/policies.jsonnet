@@ -168,7 +168,9 @@ local egress_ip_ranges =
               nodeSelector: {
                 'kubernetes.io/hostname': node,
               },
-              desiredState: generateInterfaces(name, cfg, node=node),
+              desiredState: {
+                interfaces: generateInterfaces(name, cfg, node=node),
+              },
             },
           }
         for node in std.objectFields(cfg.shadowCIDRs)
