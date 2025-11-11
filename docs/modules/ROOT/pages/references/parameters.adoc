@@ -64,7 +64,7 @@ NNCPs support targeting selected nodes via `spec.nodeSelector`.
 This field expects one or more label key-value pairs.
 To target individual nodes you can use label `kubernetes.io/hostname`.
 
-NNCPs support defining tehe maximum number of nodes where configurations are applied simultaneously via `spec.maxUnavailable`.
+NNCPs support defining the maximum number of nodes where configurations are applied simultaneously via `spec.maxUnavailable`.
 If this field isn't set explicitly, it defaults to `50%`.
 
 The NMState configuration is provided in field `spec.desiredState`.
@@ -206,7 +206,7 @@ This parameter allows users to create NNCPs which deploy additional dummy interf
 
 TIP: This parameter is currently primarily designed to support Cilium's Egress Gateway feature which requires that all egress IPs are assigned to an interface on the node.
 
-Each key value pair in the parameter is translated into a NNCP which configures one or more interfaes which are assigned the desired IP(s).
+Each key value pair in the parameter is translated into a NNCP which configures one or more interfaces which are assigned the desired IP(s).
 The component uses the keys as `metadata.name` for the resulting NNCPs.
 Keys with value `null` are skipped.
 The component expects the value to have keys `egressCIDR`, `interface_name`, `interface_prefix`, `nodeSelector`, `shadowCIDRs`, `skipFirst`, and `skipLast`.

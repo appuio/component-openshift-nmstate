@@ -233,7 +233,7 @@ NAME                  STATUS      REASON
 infra-static-routes   Available   SuccessfullyConfigured
 ----
 
-. Get an overview over the `NodeNetowrkConfigurationEnactment` resources
+. Get an overview over the `NodeNetworkConfigurationEnactment` resources
 +
 TIP: The NMState Operator generates one NNCE for each node that's selected by a NNCP's node selector.
 +
