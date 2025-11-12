@@ -3,20 +3,12 @@ local kap = import 'lib/kapitan.libjsonnet';
 local kube = import 'lib/kube.libjsonnet';
 
 local ipcalc = import 'lib/cilium-ipcalc.libsonnet';
+local nm = import 'lib/openshift-nmstate.libsonnet';
 
 local inv = kap.inventory();
 local params = inv.parameters.openshift_nmstate;
 
-local NodeNetworkConfigurationPolicy(name) =
-  kube._Object('nmstate.io/v1', 'NodeNetworkConfigurationPolicy', kube.hyphenate(name)) {
-    metadata+: {
-      annotations+: {
-        'argocd.argoproj.io/sync-options': 'SkipDryRunOnMissingResource=true',
-      },
-    },
-  };
-
-local policies = com.generateResources(params.policies, NodeNetworkConfigurationPolicy);
+local policies = com.generateResources(params.policies, nm.NodeNetworkConfigurationPolicy);
 
 local static_routes = [
   local cfg = params.staticRoutes[name];
@@ -30,7 +22,7 @@ local static_routes = [
   } + com.makeMergeable(cfg.config) {
     destination: d,
   };
-  NodeNetworkConfigurationPolicy(name) {
+  nm.NodeNetworkConfigurationPolicy(name) {
     spec: {
       nodeSelector: cfg.nodeSelector,
       desiredState: {
@@ -163,7 +155,7 @@ local egress_ip_ranges =
               scidr.count,
             ]
         else
-          NodeNetworkConfigurationPolicy(pname) {
+          nm.NodeNetworkConfigurationPolicy(pname) {
             spec: {
               nodeSelector: {
                 'kubernetes.io/hostname': node,
@@ -179,7 +171,7 @@ local egress_ip_ranges =
       // Generate a shared policy for all nodes matching the provided node
       // selector.
       [
-        NodeNetworkConfigurationPolicy(name) {
+        nm.NodeNetworkConfigurationPolicy(name) {
           spec: {
             nodeSelector: cfg.nodeSelector,
             desiredState: {
