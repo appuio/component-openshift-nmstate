@@ -1,6 +1,6 @@
 {
   "template": "https://github.com/projectsyn/commodore-component-template.git",
-  "commit": "84a7c63ca26492da555344c23ccddac302ba0bb2",
+  "commit": "7e46facc758385bc32eeecab92b4639c66fd4e4f",
   "checkout": "main",
   "context": {
     "cookiecutter": {
@@ -8,7 +8,7 @@
       "slug": "openshift-nmstate",
       "parameter_key": "openshift_nmstate",
       "test_cases": "defaults",
-      "add_lib": "n",
+      "add_lib": "y",
       "add_pp": "n",
       "add_golden": "y",
       "add_matrix": "y",
@@ -25,7 +25,7 @@
       "github_name": "component-openshift-nmstate",
       "github_url": "https://github.com/appuio/component-openshift-nmstate",
       "_template": "https://github.com/projectsyn/commodore-component-template.git",
-      "_commit": "84a7c63ca26492da555344c23ccddac302ba0bb2"
+      "_commit": "7e46facc758385bc32eeecab92b4639c66fd4e4f"
     }
   },
   "directory": null
