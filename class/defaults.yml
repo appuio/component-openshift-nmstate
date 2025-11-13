@@ -11,6 +11,11 @@ parameters:
       channel: stable
       installPlanApproval: Automatic
 
+    # This flag deploys an Espejote ManagedResource which watches
+    # nmstate-handler pods and deletes ones that have impossible node
+    # selectors.
+    schedulingFix: true
+
     config: {}
 
     policies: {}

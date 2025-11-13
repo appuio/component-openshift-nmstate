@@ -36,6 +36,23 @@ default:: `"Automatic"`
 
 Whether to automatically install new versions of the operator.
 
+== `schedulingFix`
+
+[horizontal]
+type:: boolean
+default:: `true`
+
+Whether to deploy an Espejote `ManagedResource` which watches the `nmstate-handler` DaemonSet pods and deletes any pods which are stuck in `Pending` with reason `Unschedulable`.
+
+[NOTE]
+====
+This is necessary because the operator removes the `openshift.io/node-selector=""` annotation on the namespace during reconciles which can lead to DaemonSet pods stuck in `Pending` with impossible node selectors.
+
+Usually, ArgoCD will reconfigure the node selector annotation fairly quickly.
+However, when the OLM updates the operator, the namespace is reconciled (removing the node selector annotation) and the DaemonSet is updated with a new container image in quick succession.
+This creates a window where a few DaemonSet pods will be created before ArgoCD can reconfigure the node selector annotation.
+====
+
 == `config`
 
 [horizontal]
