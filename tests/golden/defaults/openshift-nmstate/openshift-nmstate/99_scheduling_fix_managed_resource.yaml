@@ -1,0 +1,105 @@
+apiVersion: espejote.io/v1alpha1
+kind: ManagedResource
+metadata:
+  labels:
+    app.kubernetes.io/name: nmstate-handler-scheduling-fixer
+  name: nmstate-handler-scheduling-fixer
+  namespace: openshift-nmstate
+spec:
+  context:
+    - name: handler_pods
+      resource:
+        apiVersion: v1
+        kind: Pod
+        labelSelector:
+          matchLabels:
+            app: kubernetes-nmstate
+            component: kubernetes-nmstate-handler
+  serviceAccountRef:
+    name: nmstate-handler-scheduling-fixer
+  template: |
+    local esp = import 'espejote.libsonnet';
+
+    // check if the object is getting deleted by checking if it has
+    // `metadata.deletionTimestamp`.
+    local inDelete(obj) = std.get(obj.metadata, 'deletionTimestamp', '') != '';
+
+
+    // check pod conditions for
+    // type=PodScheduled
+    // status="False"
+    // reason=Unschedulable
+    local isUnschedulable(pod) =
+      local podStatus = std.get(pod, 'status', {});
+      local conds = std.get(podStatus, 'conditions', []);
+      local phase = std.get(podStatus, 'phase', '');
+      local condScheduled = std.filter(function(c) c.type == 'PodScheduled', conds);
+
+      phase == 'Pending' &&
+      std.length(condScheduled) > 0 &&
+      condScheduled[0].status == 'False' &&
+      condScheduled[0].reason == 'Unschedulable';
+
+    local deleteIfUnschedulable(pod) =
+      local nodeSel = pod.spec.nodeSelector;
+      if isUnschedulable(pod) then
+        esp.markForDelete(pod);
+
+    if esp.triggerName() == 'handler_pod' then (
+      local podT = esp.triggerData();
+      if podT != null && std.get(podT, 'resource') != null && !inDelete(podT.resource) then
+        deleteIfUnschedulable(podT.resource)
+    ) else
+      // full reconcile
+      [
+        deleteIfUnschedulable(pod)
+        for pod in esp.context().handler_pods
+        if !inDelete(pod)
+      ]
+  triggers:
+    - name: handler_pod
+      watchContextResource:
+        name: handler_pods
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations: {}
+  labels:
+    name: nmstate-handler-scheduling-fixer
+  name: nmstate-handler-scheduling-fixer
+  namespace: openshift-nmstate
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations: {}
+  labels:
+    name: nmstate-handler-scheduling-fixer
+  name: nmstate-handler-scheduling-fixer
+rules:
+  - apiGroups:
+      - ''
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+      - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations: {}
+  labels:
+    name: nmstate-handler-scheduling-fixer
+  name: nmstate-handler-scheduling-fixer
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: nmstate-handler-scheduling-fixer
+subjects:
+  - kind: ServiceAccount
+    name: nmstate-handler-scheduling-fixer
+    namespace: openshift-nmstate
