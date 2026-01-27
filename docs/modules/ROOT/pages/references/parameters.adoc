@@ -36,6 +36,18 @@ default:: `"Automatic"`
 
 Whether to automatically install new versions of the operator.
 
+== `dynamicNodeLabels`
+
+[horizontal]
+type:: bool
+default:: `false`
+
+This parameter controls whether the component deploys an Espejote `ManagedResource` which reconciles all NMState `NodeNetworkState` resources and generates dynamic node labels from their contents.
+
+Currently, the `ManagedResource` only generates one dynamic label: `nmstate.syn.tools/default-interface-name`.
+This label can be very helpful when defining NNCPs on clusters with nodes that have differing default interface names.
+For example, this label enables operators to define NNCPs that create additional static routes which will always apply cleanly even if there's a mix of default interface names in a single group of nodes.
+
 == `config`
 
 [horizontal]
