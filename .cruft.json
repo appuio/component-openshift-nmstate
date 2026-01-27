@@ -7,7 +7,7 @@
       "name": "openshift-nmstate",
       "slug": "openshift-nmstate",
       "parameter_key": "openshift_nmstate",
-      "test_cases": "defaults",
+      "test_cases": "defaults node-labels",
       "add_lib": "y",
       "add_pp": "n",
       "add_golden": "y",
