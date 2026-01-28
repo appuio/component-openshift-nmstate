@@ -11,6 +11,8 @@ parameters:
       channel: stable
       installPlanApproval: Automatic
 
+    dynamicNodeLabels: false
+
     config: {}
 
     policies: {}
