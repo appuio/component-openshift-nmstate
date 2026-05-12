@@ -26,5 +26,6 @@ if esp.triggerName() == 'nmstate_nodestate' then (
     label_node_from_nmstate(n)
 ) else [
   label_node_from_nmstate(n)
-  for n in nmstate_nodestates if !inDelete(n)
+  for n in nmstate_nodestates
+  if !inDelete(n)
 ]
