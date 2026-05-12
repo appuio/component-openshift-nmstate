@@ -42,7 +42,8 @@ spec:
         label_node_from_nmstate(n)
     ) else [
       label_node_from_nmstate(n)
-      for n in nmstate_nodestates if !inDelete(n)
+      for n in nmstate_nodestates
+      if !inDelete(n)
     ]
   triggers:
     - name: nmstate_nodestate
