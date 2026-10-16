@@ -1,4 +1,11 @@
 parameters:
+  # The operator will try to enable its console plugin automatically and fight
+  # against espejote if we don't enable it explicitly.
+  openshift4_console:
+    config:
+      plugins:
+        - nmstate-console-plugin
+
   openshift_nmstate:
     =_metadata:
       multi_tenant: true
